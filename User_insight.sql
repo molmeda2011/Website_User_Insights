@@ -125,13 +125,36 @@ FROM User_Journey
 
 
 
+----- Revenue Funnel Analysis
 
 
 
 
 
+WITH funnel_revenue AS (
+
+  SELECT
+    COUNT(CASE WHEN event_type = 'page_view' THEN user_id END) AS total_visitors,
+    COUNT(CASE WHEN event_type = 'purchase' THEN user_id END) AS totaly_buyers,
+    SUM(CASE WHEN event_type = 'purchase' THEN amount END) AS total_revenue,
+    COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) AS total_orders,
+
+  FROM `dataprojects-495916.Sql_practice.User_events`
+
+  WHERE event_date >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 120 DAY))
+)
+
+SELECT
+  total_visitors,
+  totaly_buyers,
+  ROUND(total_revenue) AS total_revenue,
+  total_orders,
+  ROUND(total_revenue / total_orders) AS avg_order_value,
+  ROUND(total_revenue / totaly_buyers) AS revenue_per_buyer,
+  ROUND(total_revenue / total_visitors) AS revenue_per_visitor,
 
 
+FROM funnel_revenue
 
 
 
